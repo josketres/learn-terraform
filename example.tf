@@ -1,10 +1,10 @@
 provider "aws" {
   profile = "default"
-  region  = "us-east-1"
+  region  = var.region
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-b374d5a5"
+  ami           = var.amis[var.region]
   instance_type = "t2.micro"
   key_name = aws_key_pair.example.key_name
   provisioner "local-exec" {
@@ -20,4 +20,12 @@ resource "aws_eip" "ip" {
 resource "aws_key_pair" "example" {
   key_name = "examplekey"
   public_key = file("~/.ssh/id_rsa.pub")
+}
+
+output "ami" {
+  value = aws_instance.example.ami
+}
+
+output "ip" {
+  value = aws_eip.ip.public_ip
 }
